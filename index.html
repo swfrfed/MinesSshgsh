@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mines.sshgsh - Переходник</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --dark-abyss: #08001a;
+            --deep-violet: #1e003d;
+            --neo-magenta: #ff00ff;
+            --vaporwave-pink: #ff0066;
+            --cyber-blue: #00c0ff;
+            --ghost-white: #e0e0e0;
+            --fade-grey: #b0b0b0;
+            --dark-glow: rgba(255, 0, 255, 0.35);
+            --shadow-alpha: rgba(0, 0, 0, 0.7);
+            --glass-base: rgba(255, 255, 255, 0.06);
+            --glass-border-subtle: rgba(255, 255, 255, 0.12);
+            --tiktok-brand: #fe2c55;
+            --telegram-brand: #0088cc;
+            --instagram-brand: #c13584;
+            --transition-quick: 0.18s;
+            --transition-smooth: 0.35s;
+            --transition-slow-bounce: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --hover-elevate: -10px;
+            --hover-expand: 1.06;
+            --particle-aura: rgba(255, 0, 255, 0.5);
+            --line-fade: rgba(255, 0, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-abyss) 0%, var(--deep-violet) 100%);
+            color: var(--ghost-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            position: relative;
+            cursor: none;
+        }
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-abyss);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 1.3s ease-out 0.7s;
+            pointer-events: all;
+        }
+
+        .preloader-symbol {
+            font-family: 'Monoton', cursive;
+            font-size: 7rem;
+            font-weight: 700;
+            color: var(--neo-magenta);
+            animation: preloaderDistort 3.2s infinite ease-in-out, preloaderFadeIn 1.6s ease-out forwards;
+            text-shadow: 0 0 18px var(--neo-magenta), 0 0 35px var(--neo-magenta), 0 0 60px var(--vaporwave-pink);
+            position: relative;
+        }
+
+        .preloader-symbol::before, .preloader-symbol::after {
+            content: 'M';
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: var(--neo-magenta);
+            opacity: 0.6;
+            filter: blur(0.8px);
+        }
+        .preloader-symbol::before {
+            animation: preloaderShiftOne 3.2s infinite ease-in-out 0.15s;
+            text-shadow: 0 0 14px var(--vaporwave-pink);
+        }
+        .preloader-symbol::after {
+            animation: preloaderShiftTwo 3.2s infinite ease-in-out 0.25s;
+            text-shadow: 0 0 14px var(--tiktok-brand);
+        }
+
+        @keyframes preloaderDistort {
+            0%, 100% { transform: scale(0.97) rotateZ(-0.8deg); opacity: 0.85; }
+            50% { transform: scale(1.03) rotateZ(0.8deg); opacity: 1; }
+        }
+        @keyframes preloaderFadeIn {
+            0% { transform: scale(0.4); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes preloaderShiftOne {
+            0%, 100% { opacity: 0.25; transform: translate(4px, -3px) skewX(8deg); }
+            50% { opacity: 0.7; transform: translate(-3px, 3px) skewX(-5deg); }
+        }
+        @keyframes preloaderShiftTwo {
+            0%, 100% { opacity: 0.35; transform: translate(-4px, 3px) skewX(-6deg); }
+            50% { opacity: 0.6; transform: translate(3px, -2px) skewX(4deg); }
+        }
+
+        body.loaded .preloader {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .background-particles-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(255, 0, 255, 0.04) 0%, transparent 75%);
+        }
+
+        .particle-orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.9s ease;
+            filter: blur(1.2px);
+            box-shadow: 0 0 6px var(--particle-aura), 0 0 12px var(--particle-aura);
+            animation: orbPulse 4.2s infinite alternate ease-in-out;
+        }
+
+        .particle-orb:nth-child(2n) { animation-delay: 0.25s; }
+        .particle-orb:nth-child(3n) { animation-delay: 0.5s; }
+        .particle-orb:nth-child(5n) { animation-delay: 0.75s; }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1); opacity: 0.65; }
+            50% { transform: scale(1.12); opacity: 1; }
+        }
+
+        .connecting-thread {
+            position: absolute;
+            height: 2px;
+            background: var(--line-fade);
+            opacity: 0;
+            transform-origin: 0 0;
+            transition: opacity 0.5s ease, background 0.5s ease;
+            box-shadow: 0 0 9px var(--line-fade);
+        }
+
+        .main-stage-container {
+            text-align: center;
+            padding: 3.5rem 2.5rem;
+            max-width: 960px;
+            width: 93%;
+            position: relative;
+            z-index: 1;
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+
+        .profile-pic, #main-header-zone, .sub-tagline, .action-matrix > .call-to-action-btn, .about-portal, .data-archive-section, footer {
+            opacity: 0;
+            transform: translateY(45px) scale(0.97);
+            transition: opacity 1.1s ease-out, transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        body.loaded .profile-pic { transition-delay: 0.6s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded #main-header-zone { transition-delay: 0.8s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded .sub-tagline { transition-delay: 1.0s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded .action-matrix .call-to-action-btn:nth-child(1) { transition-delay: 1.2s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded .action-matrix .call-to-action-btn:nth-child(2) { transition-delay: 1.4s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded .action-matrix .call-to-action-btn:nth-child(3) { transition-delay: 1.6s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded .about-portal { transition-delay: 1.8s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded .data-archive-section { transition-delay: 2.0s; opacity: 1; transform: translateY(0) scale(1); }
+        body.loaded footer { transition-delay: 2.2s; opacity: 1; transform: translateY(0) scale(1); }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 2.5rem;
+            border: 6px solid var(--neo-magenta);
+            box-shadow: 0 0 28px var(--neo-magenta), 0 0 55px var(--neo-magenta), 0 0 90px rgba(255, 0, 255, 0.55), inset 0 0 22px rgba(255,0,255,0.35);
+            background: var(--dark-abyss);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.8rem;
+            font-weight: 800;
+            font-family: 'Monoton', cursive;
+            animation: profileGlowPulse 3.8s infinite alternate ease-in-out;
+            text-shadow: 0 0 12px var(--neo-magenta);
+        }
+
+        @keyframes profileGlowPulse {
+            from { box-shadow: 0 0 22px var(--neo-magenta), 0 0 44px var(--neo-magenta), 0 0 75px rgba(255,0,255,0.48), inset 0 0 18px rgba(255,0,255,0.25); transform: scale(0.985) rotateZ(-0.3deg); }
+            to { box-shadow: 0 0 38px var(--neo-magenta), 0 0 70px var(--neo-magenta), 0 0 110px rgba(255,0,255,0.65), inset 0 0 28px rgba(255,0,255,0.4); transform: scale(1.015) rotateZ(0.3deg); }
+        }
+
+        #main-header-zone {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3.8rem;
+            color: var(--ghost-white);
+            position: relative;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            text-shadow: 0 0 12px rgba(255,255,255,0.6);
+            line-height: 1;
+        }
+
+        h1 .header-gradient {
+            background: linear-gradient(90deg, var(--neo-magenta) 0%, var(--vaporwave-pink) 65%, var(--tiktok-brand) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h1 .type-indicator {
+            display: inline-block;
+            width: 5px;
+            height: 4rem;
+            background-color: var(--neo-magenta);
+            box-shadow: 0 0 10px var(--neo-magenta);
+            animation: blinkTypeIndicator 0.7s infinite steps(1), typeIndicatorGlow 1.6s infinite alternate;
+            position: absolute;
+            right: -12px;
+            bottom: -3px;
+        }
+
+        @keyframes blinkTypeIndicator {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes typeIndicatorGlow {
+            0%, 100% { box-shadow: 0 0 10px var(--neo-magenta), 0 0 18px rgba(255,0,255,0.4); }
+            50% { box-shadow: 0 0 18px var(--neo-magenta), 0 0 30px rgba(255,0,255,0.6); }
+        }
+
+        .glitch-active h1 {
+            animation: chaoticGlitchMain 0.28s linear infinite alternate;
+        }
+        .glitch-active h1::before, .glitch-active h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .glitch-active h1::before {
+            left: 3px;
+            text-shadow: -1.5px 0 var(--vaporwave-pink);
+            clip-path: inset(58% 0 0 0);
+            animation: glitchLayerA 0.35s infinite alternate-reverse;
+        }
+        .glitch-active h1::after {
+            left: -3px;
+            text-shadow: 1.5px 0 var(--cyber-blue);
+            clip-path: inset(0 0 42% 0);
+            animation: glitchLayerB 0.35s infinite alternate-reverse;
+        }
+
+        @keyframes chaoticGlitchMain {
+            0%, 100% { transform: translate(0,0) skew(0deg); }
+            15% { transform: translate(-6px, 4px) skew(-2.5deg); }
+            30% { transform: translate(6px, -4px) skew(2.5deg); }
+            45% { transform: translate(-5px, -3px) skew(-2deg); }
+            60% { transform: translate(5px, 3px) skew(2deg); }
+            75% { transform: translate(-3px, 2px) skew(-1.5deg); }
+            90% { transform: translate(3px, -2px) skew(1.5deg); }
+        }
+        @keyframes glitchLayerA {
+            0%, 100% { clip-path: inset(58% 0 0 0); }
+            25% { clip-path: inset(15% 0 55% 0); }
+            50% { clip-path: inset(75% 0 0 0); }
+            75% { clip-path: inset(30% 0 30% 0); }
+        }
+        @keyframes glitchLayerB {
+            0%, 100% { clip-path: inset(0 0 42% 0); }
+            25% { clip-path: inset(0 0 15% 0); }
+            50% { clip-path: inset(0 0 75% 0); }
+            75% { clip-path: inset(40% 0 10% 0); }
+        }
+
+        .sub-tagline {
+            font-size: 1.5rem;
+            margin-bottom: 4rem;
+            color: var(--fade-grey);
+            letter-spacing: 1.2px;
+            text-shadow: 0 0 6px rgba(204,204,204,0.35);
+            font-weight: 300;
+            padding: 0 15px;
+            line-height: 1.4;
+        }
+
+        .action-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .call-to-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.35rem 1.8rem;
+            border-radius: 55px;
+            text-decoration: none;
+            color: var(--ghost-white);
+            font-weight: 700;
+            font-size: 1.35rem;
+            transition: all var(--transition-slow-bounce);
+            position: relative;
+            overflow: hidden;
+            border: 4px solid var(--glass-border-subtle);
+            background: var(--glass-base);
+            backdrop-filter: blur(18px) saturate(1.8);
+            box-shadow: 0 9px 30px var(--shadow-alpha), inset 0 0 9px rgba(255,255,255,0.12);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            text-shadow: 0 0 3px rgba(255,255,255,0.3);
+        }
+
+        .call-to-action-btn:hover {
+            transform: translateY(var(--hover-elevate)) scale(var(--hover-expand));
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), inset 0 0 12px rgba(255,255,255,0.18);
+        }
+
+        .call-to-action-btn::before {
+            content: '';
+            position: absolute;
+            top: -25%;
+            left: -200%;
+            width: 95%;
+            height: 150%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+            transform: skewX(-40deg);
+            transition: left 0.9s cubic-bezier(0.23, 1, 0.32, 1.0);
+        }
+        .call-to-action-btn:hover::before { left: 200%; }
+
+        .btn-tiktok:hover {
+            background: rgba(var(--tiktok-brand), 0.75);
+            border-color: var(--tiktok-brand);
+            box-shadow: 0 0 28px var(--tiktok-brand), 0 0 50px var(--tiktok-brand), 0 14px 35px rgba(0,0,0,0.65);
+        }
+        .btn-telegram:hover {
+            background: rgba(var(--telegram-brand), 0.75);
+            border-color: var(--telegram-brand);
+            box-shadow: 0 0 28px var(--telegram-brand), 0 0 50px var(--telegram-brand), 0 14px 35px rgba(0,0,0,0.65);
+        }
+        .btn-instagram:hover {
+            background: rgba(var(--instagram-brand), 0.75);
+            border-color: var(--instagram-brand);
+            box-shadow: 0 0 28px var(--instagram-brand), 0 0 50px var(--instagram-brand), 0 14px 35px rgba(0,0,0,0.65);
+        }
+
+        .btn-icon {
+            margin-right: 20px;
+            font-size: 2rem;
+            transition: transform var(--transition-smooth) cubic-bezier(0.175, 0.885, 0.32, 1.275), filter var(--transition-smooth);
+            text-shadow: 0 0 6px rgba(255,255,255,0.45);
+        }
+
+        .btn-tiktok:hover .btn-icon { animation: neonBeat 1.8s ease-in-out infinite; filter: drop-shadow(0 0 10px var(--tiktok-brand)); }
+        @keyframes neonBeat {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            25% { transform: scale(1.2) rotate(15deg); opacity: 0.8; }
+            50% { transform: scale(1.1) rotate(-10deg); opacity: 1; }
+            75% { transform: scale(1.25) rotate(5deg); opacity: 0.9; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .btn-telegram:hover .btn-icon { animation: cyberGlide 1.2s ease-out forwards; filter: drop-shadow(0 0 10px var(--telegram-brand)); }
+        @keyframes cyberGlide {
+            0% { transform: translateX(0) translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateX(10px) translateY(-10px) rotate(-25deg) scale(1.25); }
+            100% { transform: translateX(-6px) translateY(5px) rotate(12deg) scale(1.15); }
+        }
+        .btn-instagram:hover .btn-icon { animation: holoFlash 0.8s ease-in-out; filter: drop-shadow(0 0 10px var(--instagram-brand)); }
+        @keyframes holoFlash {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            35% { transform: scale(1.35); filter: brightness(2.5) drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
+            65% { transform: scale(0.92); filter: brightness(0.8); }
+        }
+
+        .about-portal {
+            background: linear-gradient(150deg, rgba(30, 0, 61, 0.85), rgba(18, 0, 38, 0.85));
+            backdrop-filter: blur(14px) brightness(1.1);
+            border-radius: 18px;
+            padding: 3.5rem;
+            margin-top: 5rem;
+            box-shadow: 0 12px 45px var(--shadow-alpha);
+            text-align: left;
+            width: 100%;
+            max-width: 850px;
+            border: 3px solid rgba(255, 255, 255, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-portal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 18px;
+            padding: 2.5px;
+            background: linear-gradient(140deg, var(--neo-magenta), var(--vaporwave-pink) 70%, var(--cyber-blue));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .about-portal h2 {
+            font-size: 2.6rem;
+            color: var(--neo-magenta);
+            margin-bottom: 2rem;
+            border-bottom: 4px solid var(--vaporwave-pink);
+            padding-bottom: 1rem;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            position: relative;
+            transform: translateX(-5px); /* subtle shift */
+        }
+
+        .about-portal h2::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0.75);
+            width: 85%;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, var(--neo-magenta), transparent);
+            border-radius: 6px;
+            opacity: 0.7;
+            animation: pulseUnderlineAccent 2.8s infinite alternate ease-in-out;
+        }
+        @keyframes pulseUnderlineAccent {
+            0%, 100% { transform: translateX(-50%) scaleX(0.75); opacity: 0.7; }
+            50% { transform: translateX(-50%) scaleX(1.05); opacity: 1; }
+        }
+
+        .about-portal p {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: var(--ghost-white);
+            margin-bottom: 1.8rem;
+            text-align: justify;
+            text-shadow: 0 0 2.5px rgba(0,0,0,0.6);
+            letter-spacing: 0.2px;
+        }
+        .about-portal p:last-child {
+            margin-bottom: 0;
+        }
+
+        .data-archive-section {
+            background: linear-gradient(150deg, rgba(30, 0, 61, 0.85), rgba(18, 0, 38, 0.85));
+            backdrop-filter: blur(14px) brightness(1.1);
+            border-radius: 18px;
+            padding: 3.5rem;
+            margin-top: 5rem;
+            box-shadow: 0 12px 45px var(--shadow-alpha);
+            text-align: left;
+            width: 100%;
+            max-width: 850px;
+            border: 3px solid rgba(255, 255, 255, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+        .data-archive-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 18px;
+            padding: 2.5px;
+            background: linear-gradient(140deg, var(--vaporwave-pink), var(--cyber-blue) 70%, var(--telegram-brand));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .data-archive-section h2 {
+            font-size: 2.6rem;
+            color: var(--neo-magenta);
+            margin-bottom: 2rem;
+            border-bottom: 4px solid var(--cyber-blue);
+            padding-bottom: 1rem;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            position: relative;
+            transform: translateX(5px); /* subtle shift */
+        }
+        .data-archive-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0.75);
+            width: 85%;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+            border-radius: 6px;
+            opacity: 0.7;
+            animation: pulseUnderlineAccent 2.8s infinite alternate ease-in-out 0.3s;
+        }
+
+        .dossier-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .dossier-record {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 7px 22px rgba(0, 0, 0, 0.4);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dossier-record:hover {
+            transform: translateY(-12px) scale(1.04);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+        }
+        .dossier-record::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            right: -12px;
+            bottom: -12px;
+            border-radius: 18px;
+            background: radial-gradient(circle at center, rgba(255, 0, 255, 0.35) 0%, transparent 65%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            transform: scale(0.75);
+        }
+        .dossier-record:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .dossier-record i {
+            font-size: 3.8rem;
+            color: var(--neo-magenta);
+            margin-bottom: 1.2rem;
+            text-shadow: 0 0 12px rgba(255,0,255,0.6);
+            transition: color 0.35s ease, transform 0.35s ease;
+            will-change: transform;
+        }
+        .dossier-record:hover i {
+            color: var(--vaporwave-pink);
+            transform: rotateY(360deg) scale(1.15);
+        }
+
+        .dossier-record h3 {
+            font-size: 1.5rem;
+            color: #ffe0ff;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .dossier-record p {
+            font-size: 1rem;
+            color: var(--fade-grey);
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 5.5rem;
+            padding: 1.8rem 0;
+            font-size: 1rem;
+            color: var(--fade-grey);
+            text-shadow: 0 0 4px rgba(176,176,176,0.45);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            text-align: center;
+            background: rgba(0,0,0,0.25);
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0.9;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        footer:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+        footer a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255,255,255,0.4);
+            transition: color 0.2s, border-bottom-color 0.2s;
+            font-weight: 500;
+        }
+        footer a:hover {
+            color: var(--neo-magenta);
+            border-bottom-color: var(--neo-magenta);
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--neo-magenta);
+            border: 4px solid var(--vaporwave-pink);
+            box-shadow: 0 0 18px rgba(255,0,255,0.8), 0 0 30px rgba(255,0,255,0.6);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            z-index: 9999;
+            transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.35s, width 0.35s, height 0.35s, border-color 0.35s, box-shadow 0.35s;
+        }
+
+        .custom-cursor.interactive-hover {
+            transform: translate(-50%, -50%) scale(2.2);
+            background: var(--vaporwave-pink);
+            border-color: var(--neo-magenta);
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 0 25px rgba(255,0,255,0.95), 0 0 40px rgba(255,0,255,0.8), 0 0 60px var(--vaporwave-pink);
+        }
+
+        #return-to-top-btn {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            background: rgba(255, 0, 255, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 2.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.45s ease, visibility 0.45s ease, transform 0.35s ease;
+            box-shadow: 0 0 18px rgba(255, 0, 255, 0.75);
+            z-index: 9000;
+        }
+        #return-to-top-btn:hover {
+            background: var(--vaporwave-pink);
+            box-shadow: 0 0 25px var(--vaporwave-pink), 0 0 40px var(--vaporwave-pink);
+            transform: translateY(-6px) scale(1.12);
+        }
+
+        #return-to-top-btn.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ripple-pulse-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.45);
+            transform: scale(0);
+            animation: rippleExpandFade 0.85s cubic-bezier(0.075, 0.82, 0.165, 1.05);
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes rippleExpandFade {
+            to {
+                transform: scale(6.5);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            h1 { font-size: 3.5rem; }
+            h1 .type-indicator { height: 3.7rem; }
+            .profile-pic { width: 140px; height: 140px; font-size: 3.5rem; }
+            .sub-tagline { font-size: 1.4rem; }
+            .about-portal, .data-archive-section { padding: 3rem; }
+            .dossier-record { padding: 1.8rem; }
+            .dossier-record i { font-size: 3.5rem; }
+            .dossier-record h3 { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 768px) {
+            .main-stage-container { padding: 3rem 1.5rem; width: 95%; }
+            .profile-pic { width: 125px; height: 125px; font-size: 3.2rem; }
+            h1 { font-size: 3rem; letter-spacing: 2px; }
+            h1 .type-indicator { height: 3.2rem; }
+            .sub-tagline { font-size: 1.25rem; margin-bottom: 3rem; }
+            .call-to-action-btn { font-size: 1.2rem; padding: 1.1rem 1.4rem; }
+            .btn-icon { font-size: 1.7rem; margin-right: 18px; }
+            .about-portal, .data-archive-section {
+                padding: 2.5rem;
+                margin-top: 4.5rem;
+            }
+            .about-portal h2, .data-archive-section h2 { font-size: 2.3rem; }
+            .about-portal p { font-size: 1.05rem; line-height: 1.8; }
+            .dossier-grid-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .dossier-record i { font-size: 3.2rem; }
+            .dossier-record h3 { font-size: 1.3rem; }
+            #return-to-top-btn { width: 55px; height: 55px; font-size: 2.2rem; bottom: 25px; right: 25px; }
+            .custom-cursor { display: none; }
+        }
+
+        @media (max-width: 576px) {
+            .profile-pic { width: 110px; height: 110px; font-size: 2.8rem; margin-bottom: 2rem; }
+            h1 { font-size: 2.5rem; letter-spacing: 1.5px; }
+            h1 .type-indicator { height: 2.6rem; }
+            .sub-tagline { font-size: 1.1rem; margin-bottom: 2.5rem; }
+            .action-matrix { gap: 1.5rem; max-width: 380px; }
+            .call-to-action-btn { font-size: 1.05rem; padding: 0.9rem 1.1rem; }
+            .btn-icon { font-size: 1.5rem; margin-right: 15px; }
+            .about-portal, .data-archive-section {
+                padding: 1.8rem;
+                margin-top: 4rem;
+            }
+            .about-portal h2, .data-archive-section h2 { font-size: 2rem; }
+            .about-portal p { font-size: 0.95rem; line-height: 1.7; }
+            .dossier-record { padding: 1.5rem; }
+            .dossier-record i { font-size: 2.8rem; }
+            .dossier-record h3 { font-size: 1.2rem; }
+            footer { margin-top: 3.5rem; font-size: 0.9rem; padding: 1.2rem 0;}
+        }
+
+    </style>
+</head>
+<body>
+    <div class="preloader">
+        <div class="preloader-symbol">M</div>
+    </div>
+
+    <div class="custom-cursor"></div>
+
+    <div class="background-particles-grid" id="particles-container-main"></div>
+
+    <div class="main-stage-container" id="content-core">
+        <div class="profile-pic">M</div>
+
+        <div id="main-header-zone" data-text="Mines.sshgsh">
+            <h1 id="brand-title"><span class="header-gradient"></span><span class="type-indicator"></span></h1>
+        </div>
+
+        <p class="sub-tagline">
+            Это не просто сайт. Это интерфейс.
+        </p>
+
+        <div class="action-matrix">
+            <a href="https://www.tiktok.com/@minesshgsh" target="_blank" rel="noopener noreferrer" class="call-to-action-btn btn-tiktok">
+                <span class="btn-icon"><i class="fab fa-tiktok"></i></span>
+                <span>TikTok Канал</span>
+            </a>
+            <a href="https://t.me/minesshgsh" target="_blank" rel="noopener noreferrer" class="call-to-action-btn btn-telegram">
+                <span class="btn-icon"><i class="fab fa-telegram-plane"></i></span>
+                <span>Telegram Сообщество</span>
+            </a>
+            <a href="https://www.instagram.com/mines.shgsh?igsh=cGkwOGZteTY3Nnpr&utm_source=qr" target="_blank" rel="noopener noreferrer" class="call-to-action-btn btn-instagram">
+                <span class="btn-icon"><i class="fab fa-instagram"></i></span>
+                <span>Instagram Профиль</span>
+            </a>
+        </div>
+
+     <section class="about-portal" id="about-section">
+    <h2>О Проекте</h2>
+    <p>
+        В **Mines.sshgsh** мы создаем цифровые миры, вдохновленные нашим увлечением.
+        Наша команда, объединенная этой общей страстью, оттачивает каждый проект до мельчайших деталей.
+        Мы верим, что технологии служат искусству, раскрывая его новые грани.
+    </p>
+    <p>
+        Mines.sshgsh — это больше, чем фан-аккаунт; это движение.
+        Движение к свободному творчеству и к созданию сообщества, где каждый голос имеет значение.
+        Присоединяйтесь к нам, чтобы вместе исследовать границы возможного в цифровом искусстве.
+        Ваша поддержка и участие — топливо для наших будущих прорывов.
+    </p>
+</section>
+       
+
+        <footer>
+            <p>
+                &copy; 2025 Mines.sshgsh. Все права защищены.
+                <span style="font-size: 0.8em; opacity: 0.8; margin-left: 8px;"></span>
+            </p>
+            <p style="font-size: 0.85em; opacity: 0.7; margin-top: 8px;">
+                <a href="#about-section">О Проекте</a> 
+          
+            </p>
+        </footer>
+    </div>
+
+    <button id="return-to-top-btn" title="Вернуться к началу">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadDelay = 2600;
+            const bodyElement = document.body;
+            const customCursor = document.querySelector('.custom-cursor');
+            const mainTitleWrapper = document.getElementById('main-header-zone');
+            const titleTextDisplay = mainTitleWrapper ? mainTitleWrapper.querySelector('#brand-title .header-gradient') : null;
+            const typeCaretIndicator = mainTitleWrapper ? mainTitleWrapper.querySelector('#brand-title .type-indicator') : null;
+            const particlesBackground = document.getElementById('particles-container-main');
+            const particleCount = 75;
+            const connectionThreshold = 165;
+            const maxConnectionsPerParticle = 8;
+            const cursorRepelRadius = 140;
+            const repelForceFactor = 1.4;
+            let currentMouseX = -9999;
+            let currentMouseY = -9999;
+            let particleInstances = [];
+            let connectionLinePool = [];
+            const maxLineElements = particleCount * maxConnectionsPerParticle;
+            const fullBrandText = "Mines.sshgsh";
+            let textWriteIndex = 0;
+
+            if (!mainTitleWrapper || !titleTextDisplay || !typeCaretIndicator) {
+                return;
+            }
+            
+            setTimeout(() => {
+                bodyElement.classList.add('loaded');
+                setTimeout(initiateTypeSequence, 450);
+            }, loadDelay);
+
+            document.addEventListener('mousemove', (event) => {
+                if (customCursor) {
+                    customCursor.style.left = event.clientX + 'px';
+                    customCursor.style.top = event.clientY + 'px';
+                }
+                currentMouseX = event.clientX;
+                currentMouseY = event.clientY;
+            });
+
+            document.addEventListener('mouseleave', () => {
+                currentMouseX = -9999;
+                currentMouseY = -9999;
+            });
+
+            document.querySelectorAll('a, button, .call-to-action-btn, .dossier-record').forEach(el => {
+                el.addEventListener('mouseenter', () => customCursor && customCursor.classList.add('interactive-hover'));
+                el.addEventListener('mouseleave', () => customCursor && customCursor.classList.remove('interactive-hover'));
+            });
+            
+            function generateConnectionLine() {
+                const line = document.createElement('div');
+                line.classList.add('connecting-thread');
+                particlesBackground.appendChild(line);
+                return line;
+            }
+
+            for(let i = 0; i < maxLineElements; i++) {
+                connectionLinePool.push(generateConnectionLine());
+            }
+            
+            class OrbParticle {
+                constructor() {
+                    this.htmlElement = document.createElement('div');
+                    this.htmlElement.classList.add('particle-orb');
+                    particlesBackground.appendChild(this.htmlElement);
+
+                    this.posX = Math.random() * window.innerWidth;
+                    this.posY = Math.random() * window.innerHeight;
+                    this.dim = Math.random() * 6 + 3.5;
+                    this.velocityX = (Math.random() - 0.5) * 1.1;
+                    this.velocityY = (Math.random() - 0.5) * 1.1;
+                    this.baseVelocityX = this.velocityX;
+                    this.baseVelocityY = this.velocityY;
+                    
+                    const r = Math.floor(Math.random() * 90 + 165);
+                    const g = Math.floor(Math.random() * 40);
+                    const b = Math.floor(Math.random() * 90 + 165);
+                    this.colorValue = `rgba(${r},${g},${b},${Math.random() * 0.45 + 0.55})`;
+
+                    this.htmlElement.style.width = `${this.dim}px`;
+                    this.htmlElement.style.height = `${this.dim}px`;
+                    this.htmlElement.style.background = this.colorValue;
+                    this.htmlElement.style.left = `${this.posX}px`;
+                    this.htmlElement.style.top = `${this.posY}px`;
+                    
+                    setTimeout(() => { this.htmlElement.style.opacity = '1'; }, Math.random() * 1200 + loadDelay);
+                }
+
+                updatePosition() {
+                    let dxMouse = this.posX - currentMouseX;
+                    let dyMouse = this.posY - currentMouseY;
+                    let mouseDist = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+                    if (mouseDist < cursorRepelRadius) {
+                        let forceDirX = dxMouse / mouseDist;
+                        let forceDirY = dyMouse / mouseDist;
+                        this.posX += forceDirX * repelForceFactor * (this.dim / 2.5);
+                        this.posY += forceDirY * repelForceFactor * (this.dim / 2.5);
+                        this.velocityX *= 0.95;
+                        this.velocityY *= 0.95;
+                    } else {
+                        this.velocityX += (this.baseVelocityX - this.velocityX) * 0.025;
+                        this.velocityY += (this.baseVelocityY - this.velocityY) * 0.025;
+                    }
+                    
+                    this.posX += this.velocityX;
+                    this.posY += this.velocityY;
+
+                    if (this.posX < -this.dim * 4) this.posX = window.innerWidth + this.dim * 3;
+                    else if (this.posX > window.innerWidth + this.dim * 4) this.posX = -this.dim * 3;
+                    if (this.posY < -this.dim * 4) this.posY = window.innerHeight + this.dim * 3;
+                    else if (this.posY > window.innerHeight + this.dim * 4) this.posY = -this.dim * 3;
+
+                    this.htmlElement.style.left = `${this.posX}px`;
+                    this.htmlElement.style.top = `${this.posY}px`;
+                }
+            }
+
+            function initializeOrbs() {
+                for (let i = 0; i < particleCount; i++) {
+                    particleInstances.push(new OrbParticle());
+                }
+            }
+            
+            function renderOrbConnections() {
+                let lineIndex = 0;
+                for (let i = 0; i < particleInstances.length; i++) {
+                    let connectionsMade = 0;
+                    for (let j = i + 1; j < particleInstances.length; j++) {
+                        if (connectionsMade >= maxConnectionsPerParticle) break;
+
+                        const deltaX = particleInstances[i].posX - particleInstances[j].posX;
+                        const deltaY = particleInstances[i].posY - particleInstances[j].posY;
+                        const euclideanDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                        if (euclideanDistance < connectionThreshold) {
+                            if (lineIndex < maxLineElements) {
+                                const lineElement = connectionLinePool[lineIndex++];
+                                lineElement.style.left = `${particleInstances[i].posX}px`;
+                                lineElement.style.top = `${particleInstances[i].posY}px`;
+                                lineElement.style.width = `${euclideanDistance}px`;
+                                lineElement.style.transform = `rotate(${Math.atan2(deltaY, deltaX) * 180 / Math.PI}deg)`;
+                                lineElement.style.opacity = `${1 - (euclideanDistance / connectionThreshold) * 0.92}`;
+                                connectionsMade++;
+                            }
+                        }
+                    }
+                }
+                for (let i = lineIndex; i < maxLineElements; i++) {
+                    connectionLinePool[i].style.opacity = '0';
+                }
+            }
+
+            function animateOrbsFrame() {
+                for (let i = 0; i < particleInstances.length; i++) {
+                    particleInstances[i].updatePosition();
+                }
+                renderOrbConnections();
+                requestAnimationFrame(animateOrbsFrame);
+            }
+            
+            if (window.innerWidth > 768) {
+                initializeOrbs();
+                animateOrbsFrame();
+            } else {
+                if (particlesBackground) particlesBackground.remove();
+            }
+
+            document.querySelectorAll('.call-to-action-btn, .dossier-record').forEach(element => {
+                element.addEventListener('click', function(event) {
+                    const rippleSpan = document.createElement('span');
+                    const bounds = this.getBoundingClientRect();
+                    const maxDim = Math.max(bounds.width, bounds.height) * 2.2;
+                    rippleSpan.style.width = rippleSpan.style.height = maxDim + 'px';
+                    rippleSpan.style.left = event.clientX - bounds.left - maxDim / 2 + 'px';
+                    rippleSpan.style.top = event.clientY - bounds.top - maxDim / 2 + 'px';
+                    rippleSpan.classList.add('ripple-pulse-effect');
+                    this.appendChild(rippleSpan);
+                    
+                    if (this.tagName === 'A') {
+                        event.preventDefault();
+                        setTimeout(() => {
+                            rippleSpan.remove();
+                            window.open(this.href, this.target || '_self');
+                        }, 800);
+                    } else {
+                        setTimeout(() => {
+                            rippleSpan.remove();
+                        }, 800);
+                    }
+                });
+            });
+
+            function initiateTypeSequence() {
+                const typeInterval = 110;
+                const typeAction = () => {
+                    if (textWriteIndex < fullBrandText.length) {
+                        titleTextDisplay.innerHTML += fullBrandText.charAt(textWriteIndex);
+                        textWriteIndex++;
+                        setTimeout(typeAction, typeInterval);
+                    } else {
+                        typeCaretIndicator.style.animation = 'none';
+                        typeCaretIndicator.style.opacity = '0';
+                        setTimeout(triggerGlitchEffect, 380);
+                    }
+                };
+                typeAction();
+            }
+            
+            function triggerGlitchEffect() {
+                if (mainTitleWrapper) {
+                    mainTitleWrapper.setAttribute('data-text', fullBrandText);
+                    mainTitleWrapper.classList.add('glitch-active');
+                    setTimeout(() => {
+                        mainTitleWrapper.classList.remove('glitch-active');
+                    }, 1400);
+                }
+            }
+
+            const backToTopButton = document.getElementById('return-to-top-btn');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 450) {
+                    backToTopButton.classList.add('is-visible');
+                } else {
+                    backToTopButton.classList.remove('is-visible');
+                }
+            });
+
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            document.querySelectorAll('footer a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
